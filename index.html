@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataReport — Relatórios Automáticos para sua Empresa</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111111;
+    --card: #171717;
+    --border: #2a2a2a;
+    --gold: #f5c842;
+    --gold2: #e8a800;
+    --white: #f0f0f0;
+    --muted: #888;
+    --green: #22c55e;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--black);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; color: var(--gold); letter-spacing: -.02em; }
+  .nav-cta {
+    background: var(--gold); color: var(--black);
+    padding: 10px 24px; border-radius: 6px;
+    font-weight: 600; font-size: 14px;
+    text-decoration: none; transition: all .2s;
+  }
+  .nav-cta:hover { background: var(--gold2); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 120px 24px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,200,66,.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(245,200,66,.1); border: 1px solid rgba(245,200,66,.3);
+    color: var(--gold); padding: 6px 16px; border-radius: 99px;
+    font-size: 13px; font-weight: 500; margin-bottom: 32px;
+    animation: fadeUp .6s ease both;
+  }
+  .hero-badge span { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(40px, 7vw, 80px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -.03em;
+    margin-bottom: 24px;
+    animation: fadeUp .7s .1s ease both;
+  }
+  h1 em { font-style: normal; color: var(--gold); }
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 20px);
+    color: #aaa; max-width: 560px;
+    line-height: 1.7; margin-bottom: 48px;
+    animation: fadeUp .7s .2s ease both;
+  }
+  .hero-actions {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp .7s .3s ease both;
+  }
+  .btn-primary {
+    background: var(--gold); color: var(--black);
+    padding: 16px 36px; border-radius: 8px;
+    font-weight: 700; font-size: 16px;
+    text-decoration: none; transition: all .2s;
+    box-shadow: 0 0 40px rgba(245,200,66,.25);
+  }
+  .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 0 60px rgba(245,200,66,.4); }
+  .btn-secondary {
+    background: transparent; color: var(--white);
+    padding: 16px 36px; border-radius: 8px;
+    font-weight: 500; font-size: 16px;
+    text-decoration: none; transition: all .2s;
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── MOCKUP ── */
+  .mockup-wrap {
+    margin-top: 80px; width: 100%; max-width: 900px;
+    animation: fadeUp .8s .4s ease both;
+    position: relative;
+  }
+  .mockup-wrap::before {
+    content: '';
+    position: absolute; inset: -40px;
+    background: radial-gradient(ellipse 60% 40% at 50% 50%, rgba(245,200,66,.08), transparent);
+    pointer-events: none;
+  }
+  .mockup {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0,0,0,.8);
+  }
+  .mockup-bar {
+    background: #1a1a1a; padding: 14px 20px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mockup-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .mockup-screen { padding: 32px; }
+  .mock-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+  .mock-kpi { background: #1a1a2e; border: 1px solid #222244; border-radius: 8px; padding: 14px; text-align: center; }
+  .mock-kpi-val { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 700; }
+  .mock-kpi-lbl { font-size: 10px; color: var(--muted); margin-top: 4px; text-transform: uppercase; }
+  .mock-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mock-chart { background: #1a1a2e; border: 1px solid #222244; border-radius: 8px; padding: 16px; height: 120px; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; }
+  .mock-chart-title { font-size: 11px; color: #888; margin-bottom: 8px; }
+  .mock-bars { display: flex; align-items: flex-end; gap: 4px; height: 70px; }
+  .mock-bar { flex: 1; border-radius: 3px 3px 0 0; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── SECTION ── */
+  section { padding: 100px 24px; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: 12px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800; line-height: 1.1;
+    letter-spacing: -.02em;
+    margin-bottom: 16px;
+  }
+  .section-sub { font-size: 17px; color: #aaa; line-height: 1.7; max-width: 560px; }
+
+  /* ── PROBLEMA ── */
+  .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 56px; }
+  .pain-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .pain-icon { font-size: 28px; flex-shrink: 0; }
+  .pain-title { font-weight: 600; margin-bottom: 6px; }
+  .pain-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* ── COMO FUNCIONA ── */
+  .steps { display: flex; flex-direction: column; gap: 0; margin-top: 56px; position: relative; }
+  .steps::before {
+    content: ''; position: absolute; left: 27px; top: 32px; bottom: 32px;
+    width: 2px; background: linear-gradient(to bottom, var(--gold), transparent);
+  }
+  .step { display: flex; gap: 28px; align-items: flex-start; padding: 28px 0; }
+  .step-num {
+    width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+    background: var(--gold); color: var(--black);
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; z-index: 1;
+    box-shadow: 0 0 24px rgba(245,200,66,.4);
+  }
+  .step-content { padding-top: 8px; }
+  .step-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 8px; }
+  .step-desc { color: #aaa; line-height: 1.7; font-size: 15px; }
+
+  /* ── RESULTADOS ── */
+  .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 56px; }
+  .result-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 32px 24px; text-align: center;
+    transition: all .3s;
+  }
+  .result-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(245,200,66,.1); }
+  .result-icon { font-size: 40px; margin-bottom: 16px; }
+  .result-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 8px; }
+  .result-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* ── SEGMENTOS ── */
+  .segs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 48px; }
+  .seg {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+    display: flex; align-items: center; gap: 14px;
+    transition: all .2s;
+  }
+  .seg:hover { border-color: var(--gold); }
+  .seg-icon { font-size: 28px; }
+  .seg-name { font-weight: 600; font-size: 15px; }
+  .seg-ex { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── PREÇO ── */
+  .pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 56px; }
+  .plan {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 40px 32px;
+    position: relative; transition: all .3s;
+  }
+  .plan.featured {
+    border-color: var(--gold);
+    box-shadow: 0 0 60px rgba(245,200,66,.15);
+  }
+  .plan-badge {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    background: var(--gold); color: var(--black);
+    padding: 4px 16px; border-radius: 99px;
+    font-size: 12px; font-weight: 700; white-space: nowrap;
+  }
+  .plan-name { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 12px; }
+  .plan-price { font-family: 'Syne', sans-serif; font-size: 52px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .plan-price sup { font-size: 24px; vertical-align: super; }
+  .plan-desc { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+  .plan-features li { display: flex; gap: 10px; font-size: 14px; align-items: flex-start; }
+  .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .plan-btn {
+    display: block; text-align: center; text-decoration: none;
+    padding: 14px; border-radius: 8px; font-weight: 600; font-size: 15px;
+    transition: all .2s;
+  }
+  .plan-btn-primary { background: var(--gold); color: var(--black); }
+  .plan-btn-primary:hover { background: var(--gold2); }
+  .plan-btn-secondary { background: transparent; color: var(--white); border: 1px solid var(--border); }
+  .plan-btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── FAQ ── */
+  .faq { display: flex; flex-direction: column; gap: 12px; margin-top: 56px; }
+  .faq-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+  }
+  .faq-q {
+    padding: 20px 24px; font-weight: 600; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    user-select: none;
+  }
+  .faq-q:hover { color: var(--gold); }
+  .faq-icon { font-size: 20px; transition: transform .3s; }
+  .faq-a { padding: 0 24px 20px; color: #aaa; line-height: 1.7; font-size: 14px; display: none; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-item.open .faq-a { display: block; }
+
+  /* ── CTA FINAL ── */
+  .cta-section {
+    padding: 100px 24px;
+    text-align: center;
+    background: linear-gradient(135deg, #111 0%, #1a1500 50%, #111 100%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .cta-section h2 { font-family: 'Syne', sans-serif; font-size: clamp(28px,5vw,52px); font-weight: 800; margin-bottom: 16px; }
+  .cta-section p { font-size: 18px; color: #aaa; margin-bottom: 40px; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 40px 48px; display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--border); color: var(--muted); font-size: 13px;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--gold); }
+
+  /* ── WHATSAPP ── */
+  .whatsapp-btn {
+    position: fixed; bottom: 28px; right: 28px; z-index: 999;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: #25d366; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(37,211,102,.5);
+    text-decoration: none; transition: all .2s;
+    animation: fadeUp 1s 1s ease both;
+  }
+  .whatsapp-btn:hover { transform: scale(1.1); }
+  .whatsapp-btn svg { width: 32px; height: 32px; fill: white; }
+
+  @media (max-width: 768px) {
+    nav { padding: 14px 16px; }
+    nav .nav-logo { font-size: 17px; }
+    nav .nav-cta { padding: 8px 16px; font-size: 13px; }
+
+    .hero { padding: 100px 16px 60px; }
+    h1 { font-size: 36px; letter-spacing: -.02em; }
+    .hero-sub { font-size: 15px; }
+    .hero-actions { flex-direction: column; align-items: center; }
+    .btn-primary, .btn-secondary { width: 100%; text-align: center; padding: 14px 24px; }
+
+    .mockup-screen { padding: 16px; }
+    .mock-kpis { grid-template-columns: repeat(2,1fr); }
+    .mock-charts { grid-template-columns: 1fr; }
+
+    section { padding: 60px 16px; }
+    .section-title { font-size: 26px; }
+    .section-sub { font-size: 15px; }
+
+    .pain-grid { grid-template-columns: 1fr; }
+    .results-grid { grid-template-columns: 1fr 1fr; }
+    .segs { grid-template-columns: 1fr 1fr; }
+    .pricing { grid-template-columns: 1fr; }
+    .charts-grid { grid-template-columns: 1fr; }
+
+    .steps::before { display: none; }
+    .step { gap: 16px; }
+    .step-num { width: 44px; height: 44px; font-size: 16px; flex-shrink: 0; }
+    .step-title { font-size: 17px; }
+
+    .cta-section { padding: 60px 16px; }
+    .cta-section h2 { font-size: 26px; }
+    .cta-section p { font-size: 15px; }
+
+    .plan { padding: 28px 20px; }
+    .plan-price { font-size: 42px; }
+
+    footer { padding: 24px 16px; flex-direction: column; text-align: center; gap: 8px; }
+  }
+
+  @media (max-width: 400px) {
+    h1 { font-size: 30px; }
+    .results-grid { grid-template-columns: 1fr; }
+    .segs { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">DataReport</div>
+  <a href="#contato" class="nav-cta">Quero contratar</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><span></span> Automação inteligente de dados</div>
+  <h1>Seus dados viram<br><em>relatórios profissionais</em><br>em minutos</h1>
+  <p class="hero-sub">Mande uma planilha por e-mail e receba automaticamente PDF, Excel e dashboard interativo — sem instalar nada, sem trabalho manual.</p>
+  <div class="hero-actions">
+    <a href="#contato" class="btn-primary">Quero para minha empresa →</a>
+    <a href="#como-funciona" class="btn-secondary">Ver como funciona</a>
+  </div>
+
+  <div class="mockup-wrap">
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="mockup-dot" style="background:#ff5f57"></div>
+        <div class="mockup-dot" style="background:#febc2e"></div>
+        <div class="mockup-dot" style="background:#28c840"></div>
+        <span style="margin-left:12px;font-size:12px;color:#555">relatorio-vendas-marco.html</span>
+      </div>
+      <div class="mockup-screen">
+        <div class="mock-kpis">
+          <div class="mock-kpi"><div class="mock-kpi-val" style="color:#f5c842">1.240</div><div class="mock-kpi-lbl">Registros</div></div>
+          <div class="mock-kpi"><div class="mock-kpi-val" style="color:#22c55e">100%</div><div class="mock-kpi-lbl">Completude</div></div>
+          <div class="mock-kpi"><div class="mock-kpi-val" style="color:#22c55e">A</div><div class="mock-kpi-lbl">Qualidade</div></div>
+          <div class="mock-kpi"><div class="mock-kpi-val" style="color:#8b5cf6">13</div><div class="mock-kpi-lbl">Colunas</div></div>
+        </div>
+        <div class="mock-charts">
+          <div class="mock-chart">
+            <div class="mock-chart-title">Distribuição — Categoria</div>
+            <div class="mock-bars">
+              <div class="mock-bar" style="height:90%;background:#f5c842"></div>
+              <div class="mock-bar" style="height:70%;background:#ef4444"></div>
+              <div class="mock-bar" style="height:55%;background:#10b981"></div>
+              <div class="mock-bar" style="height:80%;background:#3b82f6"></div>
+              <div class="mock-bar" style="height:45%;background:#8b5cf6"></div>
+              <div class="mock-bar" style="height:60%;background:#ec4899"></div>
+            </div>
+          </div>
+          <div class="mock-chart">
+            <div class="mock-chart-title">Evolução — Preço</div>
+            <div style="flex:1;display:flex;align-items:flex-end">
+              <svg viewBox="0 0 200 70" style="width:100%;height:60px">
+                <polyline points="0,60 30,45 60,50 90,30 120,35 150,20 180,25 200,15"
+                  fill="none" stroke="#f5c842" stroke-width="2.5"/>
+                <polyline points="0,60 30,45 60,50 90,30 120,35 150,20 180,25 200,15 200,70 0,70"
+                  fill="rgba(245,200,66,0.15)" stroke="none"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section style="padding:100px 24px; background: var(--dark);">
+  <div class="container">
+    <div class="section-label">O problema</div>
+    <h2 class="section-title">Você ainda perde horas<br>montando relatórios?</h2>
+    <p class="section-sub">A maioria das empresas desperdiça tempo precioso com trabalho repetitivo que poderia ser automatizado.</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon">⏰</div>
+        <div><div class="pain-title">Horas de trabalho manual</div><div class="pain-desc">Formatar planilhas, copiar dados, criar gráficos do zero toda semana ou todo mês.</div></div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">❌</div>
+        <div><div class="pain-title">Erros humanos</div><div class="pain-desc">Fórmulas erradas, dados desatualizados, gráficos que não refletem a realidade do negócio.</div></div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">📉</div>
+        <div><div class="pain-title">Decisões sem dados</div><div class="pain-desc">Sem relatórios frequentes e confiáveis, as decisões são tomadas no feeling, não em fatos.</div></div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">💸</div>
+        <div><div class="pain-title">Custo alto de ferramentas</div><div class="pain-desc">Power BI, Tableau e outras plataformas cobram caro e exigem treinamento especializado.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section id="como-funciona">
+  <div class="container">
+    <div class="section-label">Como funciona</div>
+    <h2 class="section-title">Simples assim</h2>
+    <p class="section-sub">Não precisa instalar nada, não precisa aprender nenhuma ferramenta nova.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Você manda o arquivo por e-mail</div>
+          <div class="step-desc">Basta enviar sua planilha (.csv ou .xlsx) como anexo de um e-mail para o endereço configurado. O assunto do e-mail vira o título do relatório.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">O sistema processa automaticamente</div>
+          <div class="step-desc">Em segundos, nossa inteligência analisa todos os dados: estatísticas, distribuições, correlações, outliers e insights automáticos.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Você recebe os relatórios prontos</div>
+          <div class="step-desc">Em até 2 minutos chegam 4 arquivos no seu e-mail: PDF profissional, Excel formatado, Markdown e um dashboard HTML interativo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTADOS -->
+<section style="background: var(--dark);">
+  <div class="container">
+    <div class="section-label">O que você recebe</div>
+    <h2 class="section-title">4 relatórios em<br>uma única resposta</h2>
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="result-icon">📄</div>
+        <div class="result-title">PDF Profissional</div>
+        <div class="result-desc">Capa com logo da empresa, gráficos coloridos, resumo executivo e insights automáticos. Pronto para apresentar.</div>
+      </div>
+      <div class="result-card">
+        <div class="result-icon">📊</div>
+        <div class="result-title">Excel Formatado</div>
+        <div class="result-desc">Planilha organizada com múltiplas abas: resumo, estatísticas, distribuições e correlação entre variáveis.</div>
+      </div>
+      <div class="result-card">
+        <div class="result-icon">🌐</div>
+        <div class="result-title">Dashboard Interativo</div>
+        <div class="result-desc">Arquivo HTML que abre no navegador com gráficos clicáveis, tabela pesquisável e navegação por seções.</div>
+      </div>
+      <div class="result-card">
+        <div class="result-icon">📝</div>
+        <div class="result-title">Relatório Markdown</div>
+        <div class="result-desc">Versão em texto estruturado, ideal para documentação, sistemas internos e publicação em plataformas digitais.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEGMENTOS -->
+<section>
+  <div class="container">
+    <div class="section-label">Para quem é</div>
+    <h2 class="section-title">Funciona para qualquer<br>negócio com planilhas</h2>
+    <div class="segs">
+      <div class="seg"><div class="seg-icon">🛒</div><div><div class="seg-name">Comércio</div><div class="seg-ex">Vendas, estoque, clientes</div></div></div>
+      <div class="seg"><div class="seg-icon">🏠</div><div><div class="seg-name">Imobiliárias</div><div class="seg-ex">Imóveis, leads, comissões</div></div></div>
+      <div class="seg"><div class="seg-icon">🚚</div><div><div class="seg-name">Logística</div><div class="seg-ex">Entregas, rotas, prazos</div></div></div>
+      <div class="seg"><div class="seg-icon">🏥</div><div><div class="seg-name">Clínicas</div><div class="seg-ex">Pacientes, procedimentos</div></div></div>
+      <div class="seg"><div class="seg-icon">🍽️</div><div><div class="seg-name">Restaurantes</div><div class="seg-ex">Cardápio, consumo, mesas</div></div></div>
+      <div class="seg"><div class="seg-icon">📦</div><div><div class="seg-name">Distribuidoras</div><div class="seg-ex">Pedidos, produtos, rotas</div></div></div>
+      <div class="seg"><div class="seg-icon">🎓</div><div><div class="seg-name">Escolas</div><div class="seg-ex">Alunos, notas, frequência</div></div></div>
+      <div class="seg"><div class="seg-icon">📈</div><div><div class="seg-name">Qualquer empresa</div><div class="seg-ex">Se tem planilha, funciona</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PREÇO -->
+<section id="precos" style="background: var(--dark);">
+  <div class="container">
+    <div class="section-label">Investimento</div>
+    <h2 class="section-title">Preço simples e<br>sem surpresas</h2>
+    <p class="section-sub">Pague uma vez pela configuração e use para sempre. Sem mensalidade, sem contrato longo.</p>
+    <div class="pricing">
+      <div class="plan">
+        <div class="plan-name">Básico</div>
+        <div class="plan-price"><sup>R$</sup>97</div>
+        <div class="plan-desc">Ideal para profissionais autônomos</div>
+        <ul class="plan-features">
+          <li>Configuração completa do sistema</li>
+          <li>Suporte a CSV e Excel</li>
+          <li>PDF + Excel + HTML + Markdown</li>
+          <li>Logo e cores da sua empresa</li>
+          <li>Suporte por 7 dias</li>
+        </ul>
+        <a href="#contato" class="plan-btn plan-btn-secondary">Contratar</a>
+      </div>
+      <div class="plan featured">
+        <div class="plan-badge">⭐ Mais escolhido</div>
+        <div class="plan-name">Profissional</div>
+        <div class="plan-price"><sup>R$</sup>197</div>
+        <div class="plan-desc">Para pequenas e médias empresas</div>
+        <ul class="plan-features">
+          <li>Tudo do plano Básico</li>
+          <li>Histórico no Google Sheets</li>
+          <li>Backup automático no Google Drive</li>
+          <li>Múltiplos usuários podem enviar</li>
+          <li>Suporte por 30 dias</li>
+          <li>1 ajuste personalizado incluso</li>
+        </ul>
+        <a href="#contato" class="plan-btn plan-btn-primary">Contratar agora →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="container">
+    <div class="section-label">Dúvidas frequentes</div>
+    <h2 class="section-title">Perguntas e respostas</h2>
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Preciso instalar algum programa? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Não. O sistema funciona 100% na nuvem. Você só precisa de uma conta Gmail e acesso ao e-mail — nada para instalar no seu computador ou celular.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Qual o tamanho máximo de planilha que funciona? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Funciona com planilhas de qualquer tamanho. Para arquivos com mais de 50 mil linhas, o sistema usa uma amostragem inteligente de 10 mil linhas para manter a velocidade sem perder a qualidade da análise.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Quanto tempo demora para receber o relatório? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Em média 1 a 2 minutos após o envio do e-mail. O sistema verifica a caixa de entrada a cada minuto e processa automaticamente.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Meus dados ficam seguros? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Sim. O arquivo é processado e descartado imediatamente após a geração do relatório. Nenhum dado é armazenado em servidores externos. Todo o processamento é feito em ambiente temporário e seguro.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Posso usar com minha logo e cores da empresa? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Sim! A configuração inclui a personalização completa com a logo e as cores da sua empresa no PDF e no dashboard interativo.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">E se eu tiver algum problema depois? <span class="faq-icon">+</span></div>
+        <div class="faq-a">O plano Básico inclui 7 dias de suporte após a configuração. O plano Profissional inclui 30 dias. Após esse período, suporte avulso disponível.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="cta-section" id="contato">
+  <div class="container">
+    <h2>Pronto para automatizar<br>seus relatórios?</h2>
+    <p>Entre em contato agora e tenha o sistema funcionando em até 24 horas.</p>
+    <a href="https://wa.me/5599984214616?text=Olá!%20Quero%20saber%20mais%20sobre%20o%20DataReport" class="btn-primary" style="display:inline-block">
+      💬 Falar no WhatsApp agora
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DataReport</div>
+  <div>Automação de relatórios · Ramo.py Ltda</div>
+  <div>© 2026 — Todos os direitos reservados</div>
+</footer>
+
+<!-- WHATSAPP FIXO -->
+<a href="https://wa.me/5599984214616?text=Olá!%20Quero%20saber%20mais%20sobre%20o%20DataReport" class="whatsapp-btn" target="_blank">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body>
+</html>
